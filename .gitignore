@@ -1,0 +1,17 @@
+Makefile.in
+aclocal.m4
+autom4te.cache/
+compile
+config.guess
+config.sub
+configure
+depcomp
+install-sh
+ltmain.sh
+missing
+test-driver
+.*.sw*
+Makefile
+config.*
+libtool
+.deps

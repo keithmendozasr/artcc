@@ -15,3 +15,8 @@ Makefile
 config.*
 libtool
 .deps
+.libs
+*.lo
+*.o
+test/artcctest
+*.la

@@ -3,8 +3,10 @@
 namespace artcc
 {
 
-Schedule::Schedule() {}
+const int Schedule::getWeight() const { return weight; }
+void Schedule::setWeight(const int &weight) { this->weight = weight; }
 
-Schedule::~Schedule() {}
+const std::string Schedule::getTitle() const { return title; }
+void Schedule::setTitle(const std::string &title) { this->title = title; }
 
 }

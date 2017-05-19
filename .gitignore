@@ -20,3 +20,5 @@ libtool
 *.o
 test/artcctest
 *.la
+*.log
+*.trs

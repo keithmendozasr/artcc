@@ -1,6 +1,6 @@
 #include <iostream>
 #include <sstream>
-#include "schedule.h"
+#include "task.h"
 
 using namespace std;
 using namespace artcc;
@@ -8,19 +8,19 @@ using namespace artcc;
 int
 main()
 {
-	Schedule schedule[] = {
-		Schedule(1, "Item 1"),
-		Schedule(2, "Item 2"),
-		Schedule(3, "Item 3"),
-		Schedule(4, "Item 4")
+	Task tasks[] = {
+		Task(1, "Item 1"),
+		Task(2, "Item 2"),
+		Task(3, "Item 3"),
+		Task(4, "Item 4")
 	};
 
-	for(auto i : schedule)
+	for(auto i : tasks)
 		cout << "Title: " << i.getTitle() << endl
 			<< "Weight: " << i.getWeight() << endl;
 
-	schedule[2].setTitle("Change title");
-	for(auto i : schedule)
+    tasks[2].setTitle("Change title");
+	for(auto i : tasks)
 		cout << "Title: " << i.getTitle() << endl
 			<< "Weight: " << i.getWeight() << endl;
 

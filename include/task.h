@@ -1,21 +1,21 @@
-#ifndef ARTCC_SCHEDULE_H
-#define ARTCC_SCHEDULE_H
+#ifndef ARTCC_TASK_H
+#define ARTCC_TASK_H
 
 #include <string>
 
 namespace artcc
 {
 
-class Schedule
+class Task
 {
 private:
 	int weight;
 	std::string title;
 
-	Schedule() {};
+	Task() {};
 
 public:
-	Schedule(const int &weight, const std::string &title) :
+	Task(const int &weight, const std::string &title) :
 		weight(weight),
 		title(title)
 		{}

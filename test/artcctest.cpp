@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include "task.h"
+#include "scheduler.h"
 
 using namespace std;
 using namespace artcc;
@@ -15,18 +16,23 @@ main()
 		Task(4, "Item 4")
 	};
 
-	for(auto i : tasks)
-		cout << "ID: " << i.getId() << endl
-            << "Title: " << i.getTitle() << endl
-			<< "Weight: " << i.getWeight() << endl
-            << "Priority: " << i.getPriority() << "\n" << endl;
+    Scheduler scheduler(5);
 
-    tasks[2].setTitle("Change title");
 	for(auto i : tasks)
+    {
 		cout << "ID: " << i.getId() << endl
             << "Title: " << i.getTitle() << endl
 			<< "Weight: " << i.getWeight() << endl
             << "Priority: " << i.getPriority() << "\n" << endl;
+        scheduler.addTask(std::move(i));
+    }
+
+   /*tasks[2].setTitle("Change title");
+	for(auto i : tasks)
+		cout << "ID: " << i.getId() << endl
+            << "Title: " << i.getTitle() << endl
+			<< "Weight: " << i.getWeight() << endl
+            << "Priority: " << i.getPriority() << "\n" << endl;*/
 
 	return 0;
 }

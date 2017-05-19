@@ -16,13 +16,17 @@ main()
 	};
 
 	for(auto i : tasks)
-		cout << "Title: " << i.getTitle() << endl
-			<< "Weight: " << i.getWeight() << endl;
+		cout << "ID: " << i.getId() << endl
+            << "Title: " << i.getTitle() << endl
+			<< "Weight: " << i.getWeight() << endl
+            << "Priority: " << i.getPriority() << "\n" << endl;
 
     tasks[2].setTitle("Change title");
 	for(auto i : tasks)
-		cout << "Title: " << i.getTitle() << endl
-			<< "Weight: " << i.getWeight() << endl;
+		cout << "ID: " << i.getId() << endl
+            << "Title: " << i.getTitle() << endl
+			<< "Weight: " << i.getWeight() << endl
+            << "Priority: " << i.getPriority() << "\n" << endl;
 
 	return 0;
 }

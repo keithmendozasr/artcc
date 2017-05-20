@@ -1,7 +1,9 @@
 #ifndef ARTCC_TASK_H
 #define ARTCC_TASK_H
 
+#include <iostream>
 #include <string>
+#include <utility>
 
 namespace artcc
 {
@@ -14,19 +16,13 @@ private:
     unsigned int priority;
     unsigned int id;
 
-	Task() {}
-
     static unsigned int getNextId();
 
-public:
-	Task(const int &weight, const std::string &title) :
-		weight(weight),
-		title(title),
-        id(getNextId()),
-        priority(1)
-    {}
+    Task() = delete;
 
-    Task(const int &, const std::string &, const unsigned int &);
+public:
+	//Task(const int &, const std::string &);
+    Task(const int &, const std::string &, const unsigned int & = 1);
 
 	const int getWeight() const;
 	void setWeight(const int &);

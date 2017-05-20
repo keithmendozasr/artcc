@@ -1,13 +1,18 @@
 #include <iostream>
 #include <utility>
+#include <stdexcept>
 
 #include "scheduler.h"
 
 using namespace std;
 using namespace artcc;
 
-vector<Task> Scheduler::addTask(Task && task)
+void Scheduler::addTask(Task && task)
 {
-    cout << "Adding task " << task.getTitle() << " to schedule" << endl;
+    cout << "Adding task \"" << task.getTitle() << "\" to schedule" << endl;
+
+    if(task.getWeight() > maxWeight)
+        throw invalid_argument("Task weight exceeds scheduler's max weight");
+
     taskList.push_back(task);
 }

@@ -17,13 +17,14 @@ private:
 
     Scheduler() = delete;
     Scheduler(Scheduler &&) = delete;
+    Scheduler(const Scheduler &) = delete;
 
 public:
     Scheduler(const uint8_t &maxWeight) :
         maxWeight(maxWeight)
     {}
 
-    std::vector<Task> addTask(Task &&);
+    void addTask(Task &&);
 };
 
 }

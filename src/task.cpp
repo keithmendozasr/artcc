@@ -1,13 +1,32 @@
+#include <iostream>
+
 #include "task.h"
+
+using namespace std;
 
 namespace artcc
 {
 
-Task::Task(const int &weight, const std::string &title, const unsigned int &priority)
+/*Task::Task(const int &weight, const std::string &title)
 {
-    Task(weight, title);
-    this->priority = priority;
+    cout << __PRETTY_FUNCTION__ << " called" << endl;
+    this->weight = weight;
+    this->title = title;
+    priority = 1;
+    id = getNextId();
+}*/
+
+Task::Task(const int &weight, const std::string &title, const unsigned int &priority) :
+    weight(weight),
+    title(title),
+    priority(priority),
+    id(getNextId())
+{
+    cout << __PRETTY_FUNCTION__ << " called" << endl;
 }
+/*    Task(weight, title);
+    this->priority = priority;
+}*/
 
 unsigned int Task::getNextId()
 {

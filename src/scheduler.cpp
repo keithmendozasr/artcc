@@ -16,3 +16,16 @@ void Scheduler::addTask(Task && task)
 
     taskList.push_back(task);
 }
+
+void Scheduler::printSchedule() const
+{
+    cout << "Schedule:" << endl;
+
+    for(auto i : taskList)
+    {
+        cout << "Task name: " << i.getTitle()
+            << "\n\tID: " << i.getId()
+            << "\n\tWeight: " << i.getWeight()
+            << "\n\tPriority: " << i.getPriority() << endl;
+    }
+}

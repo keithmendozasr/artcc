@@ -41,6 +41,8 @@ main()
         }
     }
 
+    scheduler.printSchedule();
+
 	return 0;
 }
 

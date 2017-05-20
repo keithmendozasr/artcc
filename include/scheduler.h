@@ -25,6 +25,8 @@ public:
     {}
 
     void addTask(Task &&);
+    
+    void printSchedule() const;
 };
 
 }

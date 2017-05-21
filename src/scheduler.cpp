@@ -1,11 +1,15 @@
 #include <iostream>
 #include <utility>
 #include <stdexcept>
+#include <vector>
+#include <iomanip>
 
 #include "scheduler.h"
 
 using namespace std;
-using namespace artcc;
+
+namespace artcc
+{
 
 void Scheduler::addTask(Task && task)
 {
@@ -28,4 +32,71 @@ void Scheduler::printSchedule() const
             << "\n\tWeight: " << i.getWeight()
             << "\n\tPriority: " << i.getPriority() << endl;
     }
+}
+
+vector<Task> Scheduler::getNextTasks()
+{
+    const int taskRowSize = taskList.size() + 1;
+    const int weightScaleSize = maxWeight + 1;
+    
+    // Build knapsack optimal solution set
+    int **grid = new int* [taskRowSize];
+    for(int i=0; i< taskRowSize; i++)
+        grid[i] = new int[weightScaleSize];
+
+    for(int i=0; i<weightScaleSize; i++)
+        grid[0][i] = 0;
+
+    for(int i=1; i < taskRowSize; i++)
+        for(int j=0; j < weightScaleSize; j++)
+        {
+            if(taskList[i-1].getWeight() > j)
+                grid[i][j] = grid[i-1][j];
+            else
+                grid[i][j] = max(grid[i-1][j],
+                    (int)(
+                        grid[i-1][j-taskList[i-1].getWeight()] + taskList[i-1].getPriority()
+                    )
+                );
+        }
+
+    for(int i=0; i< taskRowSize; i++)
+    {
+        for(int j=0; j< weightScaleSize; j++)
+            cout << setw(5) << grid[i][j];
+        cout << endl;
+    }
+
+    vector<Task> rslt;
+
+    // Collect tasks that should run next
+    {
+        int i = taskList.size();
+        cout << "Task list before collecting tasks: " << i << endl;
+        int j = maxWeight;
+        while (i>0 && j > 0)
+        {
+            if(grid[i][j] != grid[i-1][j])
+            {
+                auto schedIter = taskList.begin() + (i -1);
+                cout << "Including task \"" << schedIter->getTitle() << "\" to result" << endl;
+                i--;
+                j-= schedIter->getWeight();
+                rslt.push_back(*schedIter);
+                taskList.erase(schedIter);
+            }
+            else
+            {
+                cout << "Skipping item \"" << taskList[i-1].getTitle() << "\"" << endl;
+                i--;
+            }
+        }
+    }
+    for(int i=0; i<taskRowSize; i++)
+        delete[] grid[i];
+    delete[] grid;
+
+    return rslt;
+}
+
 }

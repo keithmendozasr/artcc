@@ -27,6 +27,8 @@ public:
     void addTask(Task &&);
     
     void printSchedule() const;
+
+    std::vector<Task> getNextTasks();
 };
 
 }

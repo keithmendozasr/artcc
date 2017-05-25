@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <vector>
 #include <iomanip>
+#include <algorithm>
 
 #include "scheduler.h"
 
@@ -68,6 +69,7 @@ vector<Task> Scheduler::getNextTasks()
     }
 
     vector<Task> rslt;
+    int nextTaskWeight = 0;
 
     // Collect tasks that should run next
     {
@@ -82,6 +84,7 @@ vector<Task> Scheduler::getNextTasks()
                 cout << "Including task \"" << schedIter->getTitle() << "\" to result" << endl;
                 i--;
                 j-= schedIter->getWeight();
+                nextTaskWeight += schedIter->getWeight();
                 rslt.push_back(*schedIter);
                 taskList.erase(schedIter);
             }
@@ -95,6 +98,18 @@ vector<Task> Scheduler::getNextTasks()
     for(int i=0; i<taskRowSize; i++)
         delete[] grid[i];
     delete[] grid;
+
+    maxWeight -= nextTaskWeight;
+    cout << "Total weight of new tasks: " << nextTaskWeight << endl
+        << "New value for maxWeight: " << (int)maxWeight << endl;
+
+    //Bump priority up by 1 to make sure that a "newer" task doesn't overtake
+    //tasks that have were missed this pass
+    for_each(taskList.begin(), taskList.end(), [](Task &i)
+    {
+        i.setPriority(i.getPriority()+1);
+        cout << "New priority for \"" << i.getTitle() << ": " << i.getPriority() << endl;
+    });
 
     return rslt;
 }

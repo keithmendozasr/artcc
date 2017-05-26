@@ -18,6 +18,9 @@
 
 #include <vector>
 #include <cstdint>
+
+#include <log4cpp/Category.hh>
+
 #include "task.h"
 
 namespace artcc
@@ -27,8 +30,8 @@ class Scheduler
 {
 private:
     std::vector<Task> taskList;
-
     uint8_t maxWeight;
+    static log4cpp::Category& log;
 
     Scheduler() = delete;
     Scheduler(Scheduler &&) = delete;

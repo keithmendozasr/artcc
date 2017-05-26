@@ -19,34 +19,42 @@
 #include <vector>
 #include <iomanip>
 #include <algorithm>
+#include <sstream>
+
+#include <log4cpp/Category.hh>
 
 #include "scheduler.h"
 
 using namespace std;
+using namespace log4cpp;
 
 namespace artcc
 {
 
+Category& Scheduler::log = Category::getInstance("artcc.Scheduler");
+
 void Scheduler::addTask(Task && task)
 {
-    cout << "Adding task \"" << task.getTitle() << "\" to schedule" << endl;
+    log << Priority::DEBUG << "Adding task \"" << task.getTitle() << "\" to schedule";
 
     if(task.getWeight() > maxWeight)
         throw invalid_argument("Task weight exceeds scheduler's max weight");
 
-    taskList.push_back(task);
+    taskList.push_back(std::move(task));
 }
 
 void Scheduler::printSchedule() const
 {
-    cout << "Schedule:" << endl;
-
-    for(auto i : taskList)
+    if(log.isDebugEnabled())
     {
-        cout << "Task name: " << i.getTitle()
-            << "\n\tID: " << i.getId()
-            << "\n\tWeight: " << i.getWeight()
-            << "\n\tPriority: " << i.getPriority() << endl;
+        log << Priority::DEBUG << "Schedule:";
+        for(auto i : taskList)
+        {
+            log << Priority::DEBUG << "Task name: " << i.getTitle()
+                << "\n\tID: " << i.getId()
+                << "\n\tWeight: " << i.getWeight()
+                << "\n\tPriority: " << i.getPriority();
+        }
     }
 }
 
@@ -76,11 +84,18 @@ vector<Task> Scheduler::getNextTasks()
                 );
         }
 
-    for(int i=0; i< taskRowSize; i++)
+    if(log.isDebugEnabled())
     {
-        for(int j=0; j< weightScaleSize; j++)
-            cout << setw(5) << grid[i][j];
-        cout << endl;
+        ostringstream logBuf;
+        for(int i=0; i< taskRowSize; i++)
+        {
+            for(int j=0; j< weightScaleSize; j++)
+                logBuf << setw(5) << grid[i][j];
+            logBuf << "\n";
+        }
+
+        log << Priority::DEBUG << "Current grid\n"
+            << logBuf.str();
     }
 
     vector<Task> rslt;
@@ -89,14 +104,14 @@ vector<Task> Scheduler::getNextTasks()
     // Collect tasks that should run next
     {
         int i = taskList.size();
-        cout << "Task list before collecting tasks: " << i << endl;
+        log << Priority::DEBUG << "Task list before collecting tasks: ";
         int j = maxWeight;
         while (i>0 && j > 0)
         {
             if(grid[i][j] != grid[i-1][j])
             {
                 auto schedIter = taskList.begin() + (i -1);
-                cout << "Including task \"" << schedIter->getTitle() << "\" to result" << endl;
+                log << Priority::DEBUG << "Including task \"" << schedIter->getTitle() << "\" to result";
                 i--;
                 j-= schedIter->getWeight();
                 nextTaskWeight += schedIter->getWeight();
@@ -105,7 +120,7 @@ vector<Task> Scheduler::getNextTasks()
             }
             else
             {
-                cout << "Skipping item \"" << taskList[i-1].getTitle() << "\"" << endl;
+                log << Priority::DEBUG << "Skipping item \"" << taskList[i-1].getTitle() << "\"";
                 i--;
             }
         }
@@ -115,15 +130,15 @@ vector<Task> Scheduler::getNextTasks()
     delete[] grid;
 
     maxWeight -= nextTaskWeight;
-    cout << "Total weight of new tasks: " << nextTaskWeight << endl
-        << "New value for maxWeight: " << (int)maxWeight << endl;
+    log << Priority::DEBUG << "Total weight of new tasks: " << nextTaskWeight;
+    log << Priority::DEBUG << "New value for maxWeight: " << (int)maxWeight;
 
     //Bump priority up by 1 to make sure that a "newer" task doesn't overtake
     //tasks that have were missed this pass
     for_each(taskList.begin(), taskList.end(), [](Task &i)
     {
         i.setPriority(i.getPriority()+1);
-        cout << "New priority for \"" << i.getTitle() << ": " << i.getPriority() << endl;
+        log << Priority::DEBUG << "New priority for \"" << i.getTitle() << ": " << i.getPriority();
     });
 
     return rslt;

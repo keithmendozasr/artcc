@@ -15,12 +15,17 @@
  ******************************************************************************/
 #include <iostream>
 
+#include <log4cpp/Priority.hh>
+
 #include "task.h"
 
 using namespace std;
+using namespace log4cpp;
 
 namespace artcc
 {
+
+Category& Task::log = log4cpp::Category::getInstance("artcc.Task");
 
 Task::Task(const int &weight, const std::string &title, const unsigned int &priority) :
     weight(weight),
@@ -28,7 +33,7 @@ Task::Task(const int &weight, const std::string &title, const unsigned int &prio
     priority(priority),
     id(getNextId())
 {
-    cout << __PRETTY_FUNCTION__ << " called" << endl;
+    log << Priority::DEBUG << __PRETTY_FUNCTION__ << " called";
 }
 
 unsigned int Task::getNextId()

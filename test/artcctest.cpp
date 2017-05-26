@@ -16,16 +16,27 @@
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
+#include <memory>
+
+#include <log4cpp/Category.hh>
+#include <log4cpp/BasicConfigurator.hh>
+#include <log4cpp/SimpleLayout.hh>
 
 #include "task.h"
 #include "scheduler.h"
 
 using namespace std;
 using namespace artcc;
+using namespace log4cpp;
 
-int
-main()
+int main()
 {
+    BasicConfigurator::configure();
+
+    Category &root = Category::getRoot();
+    root.getAppender()->setLayout(new SimpleLayout);
+    root.setPriority(Priority::DEBUG);
+
     Scheduler scheduler(5);
 
 	{
@@ -40,29 +51,29 @@ main()
 
         for(auto i : tasks)
         {
-            cout << "ID: " << i.getId() << endl
-                << "Title: " << i.getTitle() << endl
-                << "Weight: " << i.getWeight() << endl
-                << "Priority: " << i.getPriority() << "\n" << endl;
+            root << Priority::INFO << "ID: " << i.getId();
+            root << Priority::INFO << "Title: " << i.getTitle();
+            root << Priority::INFO << "Weight: " << i.getWeight();
+            root << Priority::INFO << "Priority: " << i.getPriority();
             try
             {
                 scheduler.addTask(std::move(i));
             }
             catch(const invalid_argument &e)
             {
-                cout << "Failed to add task \"" << i.getTitle() << "\" to scheduler. Cause: "
-                    << e.what() << endl;
+                root << Priority::INFO << "Failed to add task \"" << i.getTitle() << "\" to scheduler. Cause: "
+                    << e.what();
             }
         }
     }
 
-    cout << "Schedule after insert" << endl;
+    root << Priority::DEBUG << "Schedule after insert";
     scheduler.printSchedule();
 
     auto tasks = scheduler.getNextTasks();
     while(tasks.size())
     {
-        cout << "Schedule after collecting tasks" << endl;
+        root << Priority::DEBUG << "Schedule after collecting tasks";
         scheduler.printSchedule();
         tasks = scheduler.getNextTasks();
     }

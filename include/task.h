@@ -20,6 +20,8 @@
 #include <string>
 #include <utility>
 
+#include <log4cpp/Category.hh>
+
 namespace artcc
 {
 
@@ -30,6 +32,7 @@ private:
 	std::string title;
     unsigned int priority;
     unsigned int id;
+    static log4cpp::Category& log;
 
     static unsigned int getNextId();
 

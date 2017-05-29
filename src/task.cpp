@@ -43,7 +43,7 @@ unsigned int Task::getNextId()
     return id;
 }
 
-const int Task::getWeight() const { return weight; }
+const unsigned int Task::getWeight() const { return weight; }
 void Task::setWeight(const int &weight) { this->weight = weight; }
 
 const std::string Task::getTitle() const { return title; }

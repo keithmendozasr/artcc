@@ -30,7 +30,8 @@ class Scheduler
 {
 private:
     std::vector<Task> taskList;
-    uint8_t maxWeight;
+    unsigned int maxWeight;
+    unsigned int currentLoad = 0;
     static log4cpp::Category& log;
 
     Scheduler() = delete;
@@ -38,7 +39,7 @@ private:
     Scheduler(const Scheduler &) = delete;
 
 public:
-    Scheduler(const uint8_t &maxWeight) :
+    Scheduler(const unsigned int &maxWeight) :
         maxWeight(maxWeight)
     {}
 

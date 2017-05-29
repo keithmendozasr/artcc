@@ -42,7 +42,7 @@ public:
 	//Task(const int &, const std::string &);
     Task(const int &, const std::string &, const unsigned int & = 1);
 
-	const int getWeight() const;
+	const unsigned int getWeight() const;
 	void setWeight(const int &);
 
 	const std::string getTitle() const;

@@ -71,7 +71,8 @@ int main()
     scheduler.printSchedule();
 
     auto tasks = scheduler.getNextTasks();
-    while(tasks.size())
+    int cnt=4;
+    while(tasks.size() && (--cnt) > 0)
     {
         root << Priority::DEBUG << "Schedule after collecting tasks";
         scheduler.printSchedule();

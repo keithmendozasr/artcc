@@ -60,19 +60,27 @@ void Scheduler::printSchedule() const
 
 vector<Task> Scheduler::getNextTasks()
 {
-    const int taskRowSize = taskList.size() + 1;
-    const int weightScaleSize = maxWeight + 1;
+    const unsigned int taskRowSize = taskList.size() + 1;
+    const unsigned int weightScaleSize = maxWeight - currentLoad + 1;
+    vector<Task> rslt;
+
+    //Check if there's even room for new tasks
+    if(maxWeight <= currentLoad)
+    {
+        log << Priority::INFO << "Current load is at max capacity of " << maxWeight << ". Not returning new tasks";
+        return std::move(rslt);
+    }
     
     // Build knapsack optimal solution set
     int **grid = new int* [taskRowSize];
-    for(int i=0; i< taskRowSize; i++)
+    for(unsigned int i=0; i< taskRowSize; i++)
         grid[i] = new int[weightScaleSize];
 
-    for(int i=0; i<weightScaleSize; i++)
+    for(unsigned int i=0; i<weightScaleSize; i++)
         grid[0][i] = 0;
 
-    for(int i=1; i < taskRowSize; i++)
-        for(int j=0; j < weightScaleSize; j++)
+    for(unsigned int i=1; i < taskRowSize; i++)
+        for(unsigned int j=0; j < weightScaleSize; j++)
         {
             if(taskList[i-1].getWeight() > j)
                 grid[i][j] = grid[i-1][j];
@@ -87,9 +95,9 @@ vector<Task> Scheduler::getNextTasks()
     if(log.isDebugEnabled())
     {
         ostringstream logBuf;
-        for(int i=0; i< taskRowSize; i++)
+        for(unsigned int i=0; i< taskRowSize; i++)
         {
-            for(int j=0; j< weightScaleSize; j++)
+            for(unsigned int j=0; j< weightScaleSize; j++)
                 logBuf << setw(5) << grid[i][j];
             logBuf << "\n";
         }
@@ -98,14 +106,13 @@ vector<Task> Scheduler::getNextTasks()
             << logBuf.str();
     }
 
-    vector<Task> rslt;
-    int nextTaskWeight = 0;
 
     // Collect tasks that should run next
     {
         int i = taskList.size();
         log << Priority::DEBUG << "Task list before collecting tasks: ";
-        int j = maxWeight;
+        int j = maxWeight - currentLoad;
+        currentLoad = 0;
         while (i>0 && j > 0)
         {
             if(grid[i][j] != grid[i-1][j])
@@ -114,7 +121,7 @@ vector<Task> Scheduler::getNextTasks()
                 log << Priority::DEBUG << "Including task \"" << schedIter->getTitle() << "\" to result";
                 i--;
                 j-= schedIter->getWeight();
-                nextTaskWeight += schedIter->getWeight();
+                currentLoad += schedIter->getWeight();
                 rslt.push_back(*schedIter);
                 taskList.erase(schedIter);
             }
@@ -125,13 +132,11 @@ vector<Task> Scheduler::getNextTasks()
             }
         }
     }
-    for(int i=0; i<taskRowSize; i++)
+    for(unsigned int i=0; i<taskRowSize; i++)
         delete[] grid[i];
     delete[] grid;
 
-    maxWeight -= nextTaskWeight;
-    log << Priority::DEBUG << "Total weight of new tasks: " << nextTaskWeight;
-    log << Priority::DEBUG << "New value for maxWeight: " << (int)maxWeight;
+    log << Priority::DEBUG << "Total weight of new tasks: " << currentLoad;
 
     //Bump priority up by 1 to make sure that a "newer" task doesn't overtake
     //tasks that have were missed this pass
@@ -141,7 +146,7 @@ vector<Task> Scheduler::getNextTasks()
         log << Priority::DEBUG << "New priority for \"" << i.getTitle() << ": " << i.getPriority();
     });
 
-    return rslt;
+    return std::move(rslt);
 }
 
 }

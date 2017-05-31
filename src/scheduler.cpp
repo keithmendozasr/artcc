@@ -33,14 +33,14 @@ namespace artcc
 
 Category& Scheduler::log = Category::getInstance("artcc.Scheduler");
 
-void Scheduler::addTask(Task && task)
+void Scheduler::addTask(const Task & task)
 {
     log << Priority::DEBUG << "Adding task \"" << task.getTitle() << "\" to schedule";
 
     if(task.getWeight() > maxWeight)
         throw invalid_argument("Task weight exceeds scheduler's max weight");
 
-    taskList.push_back(std::move(task));
+    taskList.push_back(task);
 }
 
 const vector<Task> & Scheduler::getAllTasks() const

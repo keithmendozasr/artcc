@@ -43,10 +43,8 @@ public:
         maxWeight(maxWeight)
     {}
 
-    void addTask(Task &&);
-    
+    void addTask(const Task &);
     const std::vector<Task> & getAllTasks() const;
-
     std::vector<Task> getNextTasks();
 };
 

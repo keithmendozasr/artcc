@@ -45,7 +45,7 @@ public:
 
     void addTask(Task &&);
     
-    void printSchedule() const;
+    const std::vector<Task> & getAllTasks() const;
 
     std::vector<Task> getNextTasks();
 };

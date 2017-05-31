@@ -43,18 +43,10 @@ void Scheduler::addTask(Task && task)
     taskList.push_back(std::move(task));
 }
 
-void Scheduler::printSchedule() const
+const vector<Task> & Scheduler::getAllTasks() const
 {
-    if(log.isDebugEnabled())
-    {
-        log << Priority::DEBUG << "Schedule:";
-        for(auto i : taskList)
-        {
-            log << Priority::DEBUG << "Task name: " << i.getTitle()
-                << "\n\tWeight: " << i.getWeight()
-                << "\n\tPriority: " << i.getPriority();
-        }
-    }
+    log << Priority::DEBUG << "Returning list of tasks in queue";
+    return taskList;
 }
 
 vector<Task> Scheduler::getNextTasks()

@@ -67,14 +67,24 @@ int main()
     }
 
     root << Priority::DEBUG << "Schedule after insert";
-    scheduler.printSchedule();
+    {
+        for(auto i : scheduler.getAllTasks())
+            root << Priority::DEBUG << "Task name: " << i.getTitle()
+                << "\n\tWeight: " << i.getWeight()
+                << "\n\tPriority: " << i.getPriority();
+    }
 
     auto tasks = scheduler.getNextTasks();
     int cnt=4;
     while(tasks.size() && (--cnt) > 0)
     {
         root << Priority::DEBUG << "Schedule after collecting tasks";
-        scheduler.printSchedule();
+        {
+            for(auto i : scheduler.getAllTasks())
+                root << Priority::DEBUG << "Task name: " << i.getTitle()
+                    << "\n\tWeight: " << i.getWeight()
+                    << "\n\tPriority: " << i.getPriority();
+        }
         tasks = scheduler.getNextTasks();
     }
 

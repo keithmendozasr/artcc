@@ -51,7 +51,6 @@ int main()
 
         for(auto i : tasks)
         {
-            root << Priority::INFO << "ID: " << i.getId();
             root << Priority::INFO << "Title: " << i.getTitle();
             root << Priority::INFO << "Weight: " << i.getWeight();
             root << Priority::INFO << "Priority: " << i.getPriority();

@@ -34,8 +34,6 @@ private:
     unsigned int id;
     static log4cpp::Category& log;
 
-    static unsigned int getNextId();
-
     Task() = delete;
 
 public:
@@ -47,8 +45,6 @@ public:
 
 	const std::string getTitle() const;
 	void setTitle(const std::string &);
-
-    const unsigned int getId() const;
 
     const unsigned int getPriority() const;
     void setPriority(const unsigned int &);

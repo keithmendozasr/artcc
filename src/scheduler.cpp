@@ -51,7 +51,6 @@ void Scheduler::printSchedule() const
         for(auto i : taskList)
         {
             log << Priority::DEBUG << "Task name: " << i.getTitle()
-                << "\n\tID: " << i.getId()
                 << "\n\tWeight: " << i.getWeight()
                 << "\n\tPriority: " << i.getPriority();
         }

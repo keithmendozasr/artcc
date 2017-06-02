@@ -46,6 +46,7 @@ public:
     void addTask(const Task &);
     const std::vector<Task> & getAllTasks() const;
     std::vector<Task> getNextTasks();
+    void notifyTaskDone(const Task &);
 };
 
 }

@@ -1,5 +1,8 @@
 #include <utility>
 #include <algorithm>
+#include <iostream>
+
+#include <log4cpp/BasicConfigurator.hh>
 
 #include "gtest/gtest.h"
 #include "src/gtest-all.cc"
@@ -18,15 +21,14 @@ protected:
     virtual void SetUp()
     {
         s.addTask(Task(1, "Item 1"));
-        s.addTask(Task(2, "Item 2"));
-        s.addTask(Task(3, "Item 3"));
-        s.addTask(Task(4, "Item 4"));
-        s.addTask(Task(5, "Item 5", 100));
+        s.addTask(Task(1, "Item 2"));
+        s.addTask(Task(3, "Item 5", 3));
+        s.addTask(Task(1, "Item 3", 2));
+        s.addTask(Task(1, "Item 4"));
     }
 
-    ::testing::AssertionResult checkExpectedTasks(const Task taskBaseline[], const unsigned int &cnt)
+    ::testing::AssertionResult checkExpectedTasks(const Task taskBaseline[], const unsigned int &cnt, vector<Task> &rslt)
     {
-        auto rslt = s.getAllTasks();
         for(auto i=0u; i<cnt; i++)
         {
             auto t = taskBaseline[i];
@@ -50,19 +52,16 @@ TEST_F(TestScheduler, addTask)
 
 TEST_F(TestScheduler, getNextTask)
 {
-    //rslt will be a vector<Task> type
-    auto rslt = s.getNextTasks();
-    EXPECT_EQ(rslt.size(), 1u);
-    auto t = rslt[0];
-    EXPECT_EQ(t.getTitle(), string("Item 5"));
-
-    const Task taskBaseline[] = {
-        Task(1, "Item 1"),
-        Task(2, "Item 2"),
-        Task(3, "Item 3"),
-        Task(4, "Item 4")
-    };
-    EXPECT_TRUE(checkExpectedTasks(taskBaseline, 4));
+    {
+        auto rslt = s.getNextTasks();
+        EXPECT_EQ(rslt.size(), 3u);
+        const Task taskBaseline[] = {
+            Task(1, "Item 1"),
+            Task(2, "Item 3"),
+            Task(3, "Item 5", 3),
+        };
+        EXPECT_TRUE(checkExpectedTasks(taskBaseline, 3, rslt));
+    }
 }
 
 TEST_F(TestScheduler, getAllTasks)
@@ -75,7 +74,17 @@ TEST_F(TestScheduler, getAllTasks)
         Task(4, "Item 4"),
         Task(5, "Item 5", 100)
     };
-    EXPECT_TRUE(checkExpectedTasks(taskBaseline, 5));
+    EXPECT_TRUE(checkExpectedTasks(taskBaseline, 5, rslt));
+}
+
+TEST_F(TestScheduler, notifyTaskDone)
+{
+    EXPECT_THROW(s.notifyTaskDone(Task(1, "")), invalid_argument);
+
+    auto rslt = s.getNextTasks();
+    for(auto i : rslt)
+        ASSERT_NO_THROW(s.notifyTaskDone(i));
+    EXPECT_THROW(s.notifyTaskDone(rslt[0]), invalid_argument);
 }
 
 int main(int argc, char **argv)

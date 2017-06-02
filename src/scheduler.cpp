@@ -103,7 +103,6 @@ vector<Task> Scheduler::getNextTasks()
         int i = taskList.size();
         log << Priority::DEBUG << "Task list before collecting tasks: ";
         int j = maxWeight - currentLoad;
-        currentLoad = 0;
         while (i>0 && j > 0)
         {
             if(grid[i][j] != grid[i-1][j])
@@ -138,6 +137,17 @@ vector<Task> Scheduler::getNextTasks()
     });
 
     return std::move(rslt);
+}
+
+void Scheduler::notifyTaskDone(const Task & task)
+{
+    log << Priority::DEBUG << "Value of currentLoad: " << currentLoad << " Task's weight: " << task.getWeight();
+    if(currentLoad == 0 || task.getWeight() > currentLoad)
+        throw invalid_argument(string("Failed to mark task ") + task.getTitle() + " as done. Current load mismatch");
+
+    log << Priority::DEBUG << "Noting task " << task.getTitle() << " as done";
+    currentLoad -= task.getWeight();
+    log << Priority::DEBUG << "New value of currentLoad: " << currentLoad;
 }
 
 }

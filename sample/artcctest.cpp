@@ -29,64 +29,55 @@ using namespace std;
 using namespace artcc;
 using namespace log4cpp;
 
+void getNextTasks(Scheduler &scheduler)
+{
+    Category &root = Category::getRoot();
+
+    auto rslt = scheduler.getNextTasks();
+    root << Priority::INFO << "Next tasks: ";
+    for(auto i : rslt)
+        root << Priority::INFO << i.getTitle() << " Weight: " << i.getWeight() << " Priority: " << i.getPriority();
+}
+
 int main()
 {
     BasicConfigurator::configure();
 
     Category &root = Category::getRoot();
     root.getAppender()->setLayout(new SimpleLayout);
-    root.setPriority(Priority::DEBUG);
+
+    {
+        Category &scheduler = Category::getInstance("artcc.Scheduler");
+        scheduler.setPriority(Priority::DEBUG);
+    }
+    //root.setPriority(Priority::DEBUG);
 
     Scheduler scheduler(5);
 
-	{
-        Task tasks[] = {
-            Task(1, "Item 1"),
-            Task(2, "Item 2"),
-            Task(5, "Item 6", 100),
-            Task(3, "Item 3"),
-            Task(4, "Item 4"),
-            Task(6, "Item 5"),
-        };
+    Task tasks[] = {
+        Task(1, "Item 1", 2),
+        Task(1, "Item 2"),
+        Task(3, "Item 5", 3),
+        Task(2, "Item 3", 2),
+        Task(1, "Item 4"),
+    };
 
-        for(auto i : tasks)
-        {
-            root << Priority::INFO << "Title: " << i.getTitle();
-            root << Priority::INFO << "Weight: " << i.getWeight();
-            root << Priority::INFO << "Priority: " << i.getPriority();
-            try
-            {
-                scheduler.addTask(std::move(i));
-            }
-            catch(const invalid_argument &e)
-            {
-                root << Priority::INFO << "Failed to add task \"" << i.getTitle() << "\" to scheduler. Cause: "
-                    << e.what();
-            }
-        }
-    }
+    for(auto i : tasks)
+        scheduler.addTask(i);
 
-    root << Priority::DEBUG << "Schedule after insert";
+    root << Priority::INFO << "Schedule after insert";
     {
         for(auto i : scheduler.getAllTasks())
-            root << Priority::DEBUG << "Task name: " << i.getTitle()
+            root << Priority::INFO << "Task name: " << i.getTitle()
                 << "\n\tWeight: " << i.getWeight()
                 << "\n\tPriority: " << i.getPriority();
     }
 
-    auto tasks = scheduler.getNextTasks();
-    int cnt=4;
-    while(tasks.size() && (--cnt) > 0)
-    {
-        root << Priority::DEBUG << "Schedule after collecting tasks";
-        {
-            for(auto i : scheduler.getAllTasks())
-                root << Priority::DEBUG << "Task name: " << i.getTitle()
-                    << "\n\tWeight: " << i.getWeight()
-                    << "\n\tPriority: " << i.getPriority();
-        }
-        tasks = scheduler.getNextTasks();
-    }
+    getNextTasks(scheduler);
+    scheduler.notifyTaskDone(tasks[3]);
+    getNextTasks(scheduler);
+    scheduler.notifyTaskDone(tasks[2]);
+    getNextTasks(scheduler);
 
 	return 0;
 }

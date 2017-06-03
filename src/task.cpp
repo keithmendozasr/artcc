@@ -27,9 +27,10 @@ namespace artcc
 
 Category& Task::log = log4cpp::Category::getInstance("artcc.Task");
 
-Task::Task(const int &weight, const std::string &title, const unsigned int &priority) :
+Task::Task(const int &weight, const std::string &title, std::function<void()> taskProcess, const unsigned int &priority) :
     weight(weight),
     title(title),
+    taskProcess(taskProcess),
     priority(priority)
 {
     log << Priority::DEBUG << __PRETTY_FUNCTION__ << " called";
@@ -43,5 +44,8 @@ void Task::setTitle(const std::string &title) { this->title = title; }
 
 const unsigned int Task::getPriority() const { return priority; }
 void Task::setPriority(const unsigned int &priority) { this-> priority = priority; }
+
+void Task::setTaskProcess(std::function<void()> taskProcess) { this->taskProcess = taskProcess; }
+void Task::runTask() { this->taskProcess(); }
 
 }

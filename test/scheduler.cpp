@@ -20,11 +20,11 @@ protected:
 
     virtual void SetUp()
     {
-        s.addTask(Task(1, "Item 1"));
-        s.addTask(Task(1, "Item 2"));
-        s.addTask(Task(3, "Item 5", 3));
-        s.addTask(Task(1, "Item 3", 2));
-        s.addTask(Task(1, "Item 4"));
+        s.addTask(Task(1, "Item 1", [](){}));
+        s.addTask(Task(1, "Item 2", [](){}));
+        s.addTask(Task(3, "Item 5", [](){}, 3));
+        s.addTask(Task(1, "Item 3", [](){}, 2));
+        s.addTask(Task(1, "Item 4", [](){}));
     }
 
     ::testing::AssertionResult checkExpectedTasks(const Task taskBaseline[], const unsigned int &cnt, vector<Task> &rslt)
@@ -43,10 +43,10 @@ protected:
 
 TEST_F(TestScheduler, addTask)
 {
-    Task t(1, "Item 1");
+    Task t(1, "Item 1", [](){});
     EXPECT_NO_THROW(s.addTask(std::move(t)));
 
-    Task t2(10, "Bad Task");
+    Task t2(10, "Bad Task", [](){});
     EXPECT_THROW(s.addTask(std::move(t2)), invalid_argument);
 }
 
@@ -56,9 +56,9 @@ TEST_F(TestScheduler, getNextTask)
         auto rslt = s.getNextTasks();
         EXPECT_EQ(rslt.size(), 3u);
         const Task taskBaseline[] = {
-            Task(1, "Item 1"),
-            Task(2, "Item 3"),
-            Task(3, "Item 5", 3),
+            Task(1, "Item 1", [](){}),
+            Task(2, "Item 3", [](){}),
+            Task(3, "Item 5", [](){}, 3),
         };
         EXPECT_TRUE(checkExpectedTasks(taskBaseline, 3, rslt));
     }
@@ -68,18 +68,18 @@ TEST_F(TestScheduler, getAllTasks)
 {
     auto rslt = s.getAllTasks();
     Task taskBaseline[] = {
-        Task(1, "Item 1"),
-        Task(2, "Item 2"),
-        Task(3, "Item 3"),
-        Task(4, "Item 4"),
-        Task(5, "Item 5", 100)
+        Task(1, "Item 1", [](){}),
+        Task(2, "Item 2", [](){}),
+        Task(3, "Item 3", [](){}),
+        Task(4, "Item 4", [](){}),
+        Task(5, "Item 5", [](){}, 100)
     };
     EXPECT_TRUE(checkExpectedTasks(taskBaseline, 5, rslt));
 }
 
 TEST_F(TestScheduler, notifyTaskDone)
 {
-    EXPECT_THROW(s.notifyTaskDone(Task(1, "")), invalid_argument);
+    EXPECT_THROW(s.notifyTaskDone(Task(1, "", [](){})), invalid_argument);
 
     auto rslt = s.getNextTasks();
     for(auto i : rslt)

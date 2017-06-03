@@ -55,11 +55,11 @@ int main()
     Scheduler scheduler(5);
 
     Task tasks[] = {
-        Task(1, "Item 1", 2),
-        Task(1, "Item 2"),
-        Task(3, "Item 5", 3),
-        Task(2, "Item 3", 2),
-        Task(1, "Item 4"),
+        Task(1, "Item 1", [&root](){ root << Priority::DEBUG << "Item 1 task"; }, 2),
+        Task(1, "Item 2", [&root](){ root << Priority::DEBUG << "Item 2 task"; }),
+        Task(3, "Item 5", [&root](){ root << Priority::DEBUG << "Item 5 task"; }, 3),
+        Task(2, "Item 3", [&root](){ root << Priority::DEBUG << "Item 3 task"; },  2),
+        Task(1, "Item 4", [&root](){ root << Priority::DEBUG << "Item 4 task"; }),
     };
 
     for(auto i : tasks)

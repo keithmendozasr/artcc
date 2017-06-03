@@ -19,6 +19,7 @@
 #include <iostream>
 #include <string>
 #include <utility>
+#include <functional>
 
 #include <log4cpp/Category.hh>
 
@@ -30,6 +31,7 @@ class Task
 private:
 	int weight;
 	std::string title;
+    std::function<void()> taskProcess;
     unsigned int priority;
     unsigned int id;
     static log4cpp::Category& log;
@@ -38,7 +40,7 @@ private:
 
 public:
 	//Task(const int &, const std::string &);
-    Task(const int &, const std::string &, const unsigned int & = 1);
+    Task(const int &, const std::string &, std::function<void()>, const unsigned int & = 1);
 
 	const unsigned int getWeight() const;
 	void setWeight(const int &);
@@ -48,6 +50,9 @@ public:
 
     const unsigned int getPriority() const;
     void setPriority(const unsigned int &);
+
+    void setTaskProcess(std::function<void()>);
+    void runTask();
 };
 
 }

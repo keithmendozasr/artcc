@@ -36,7 +36,10 @@ void getNextTasks(Scheduler &scheduler)
     auto rslt = scheduler.getNextTasks();
     root << Priority::INFO << "Next tasks: ";
     for(auto i : rslt)
+    {
         root << Priority::INFO << i.getTitle() << " Weight: " << i.getWeight() << " Priority: " << i.getPriority();
+        i.runTask();
+    }
 }
 
 int main()
@@ -46,20 +49,22 @@ int main()
     Category &root = Category::getRoot();
     root.getAppender()->setLayout(new SimpleLayout);
 
-    {
+    /*{
         Category &scheduler = Category::getInstance("artcc.Scheduler");
         scheduler.setPriority(Priority::DEBUG);
-    }
-    //root.setPriority(Priority::DEBUG);
+    }*/
+
+    Category &task = Category::getInstance("task");
+    task.setPriority(Priority::DEBUG);
 
     Scheduler scheduler(5);
 
     Task tasks[] = {
-        Task(1, "Item 1", [&root](){ root << Priority::DEBUG << "Item 1 task"; }, 2),
-        Task(1, "Item 2", [&root](){ root << Priority::DEBUG << "Item 2 task"; }),
-        Task(3, "Item 5", [&root](){ root << Priority::DEBUG << "Item 5 task"; }, 3),
-        Task(2, "Item 3", [&root](){ root << Priority::DEBUG << "Item 3 task"; },  2),
-        Task(1, "Item 4", [&root](){ root << Priority::DEBUG << "Item 4 task"; }),
+        Task(1, "Item 1", [&task](){ task << Priority::DEBUG << "Item 1 task"; }, 2),
+        Task(1, "Item 2", [&task](){ task << Priority::DEBUG << "Item 2 task"; }),
+        Task(3, "Item 5", [&task](){ task << Priority::DEBUG << "Item 5 task"; }, 3),
+        Task(2, "Item 3", [&task](){ task << Priority::DEBUG << "Item 3 task"; },  2),
+        Task(1, "Item 4", [&task](){ task << Priority::DEBUG << "Item 4 task"; }),
     };
 
     for(auto i : tasks)
